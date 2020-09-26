@@ -1,9 +1,22 @@
+//plugins {
+//    id 'java'
+//}
+//
+//group 'jadlet'
+//version '1.0-SNAPSHOT'
+//
+//mainClassName = "App"
+
 plugins {
     id 'java'
+    id 'application'
 }
 
 group 'jadlet'
 version '1.0-SNAPSHOT'
+
+mainClassName = 'App'
+
 
 sourceCompatibility = 1.8
 
