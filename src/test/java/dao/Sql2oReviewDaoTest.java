@@ -9,6 +9,8 @@ import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 import org.sql2o.Sql2oException;
 
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 public class Sql2oReviewDaoTest {
@@ -37,7 +39,7 @@ public class Sql2oReviewDaoTest {
     public void timeStampIsReturnedCorrectly() throws Exception {
         Restaurant testRestaurant = setupRestaurant();
         restaurantDao.add(testRestaurant);
-        Review testReview = new Review("Captain Kirk", "foodcoma!", 3, testRestaurant.getId());
+        Review testReview = new Review("Captain Kirk", "Captain Kirk",3, testRestaurant.getId());
         reviewDao.add(testReview);
 
         long creationTime = testReview.getCreatedat();
@@ -47,7 +49,6 @@ public class Sql2oReviewDaoTest {
         assertEquals(formattedCreationTime,formattedSavedTime);
         assertEquals(creationTime, savedTime);
     }
-
 
     @Test
     public void addingReviewSetsId() throws Exception {
@@ -88,6 +89,48 @@ public class Sql2oReviewDaoTest {
         reviewDao.clearAll();
         assertEquals(0, reviewDao.getAll().size());
     }
+
+    @Test
+    public void reviewsAreReturnedInCorrectOrder() throws Exception {
+        Restaurant testRestaurant = setupRestaurant();
+        restaurantDao.add(testRestaurant);
+        Review testReview = new Review("Captain Kirk", "foodcoma!", 4, testRestaurant.getId());
+        reviewDao.add(testReview);
+        try {
+            Thread.sleep(2000);
+        }
+        catch (InterruptedException ex){
+            ex.printStackTrace();
+        }
+
+        Review testSecondReview = new Review("Mr. Spock", "passable", 1,  testRestaurant.getId());
+        reviewDao.add(testSecondReview);
+
+        try {
+            Thread.sleep(2000);
+        }
+        catch (InterruptedException ex){
+            ex.printStackTrace();
+        }
+
+        Review testThirdReview = new Review("Scotty", "bloody good grub!", 3, testRestaurant.getId());
+        reviewDao.add(testThirdReview);
+
+        try {
+            Thread.sleep(2000);
+        }
+        catch (InterruptedException ex){
+            ex.printStackTrace();
+        }
+
+        Review testFourthReview = new Review("I prefer home cooking", "Mr. Sulu", 2, testRestaurant.getId());
+        reviewDao.add(testFourthReview);
+
+        assertEquals(4, reviewDao.getAllReviewsByRestaurant(testRestaurant.getId()).size()); //it is important we verify that the list is the same size.
+        assertEquals("I prefer home cooking", reviewDao.getAllReviewsByRestaurantSortedNewestToOldest(testRestaurant.getId()).get(0).getContent());
+    }
+
+
 
     //helpers
 
