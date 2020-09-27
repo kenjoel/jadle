@@ -4,9 +4,7 @@ import model.Foodtype;
 import model.Restaurant;
 import model.Review;
 import org.graalvm.compiler.lir.amd64.AMD64Arithmetic;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 import org.sql2o.Sql2oException;
@@ -14,25 +12,34 @@ import org.sql2o.Sql2oException;
 import static org.junit.Assert.*;
 
 public class Sql2oFoodTypeDaoTest{
-    private Connection conn;
-    private Sql2oFoodTypeDao foodTypeDao;
-    private Sql2oRestaurantDao restaurantDao;
+    private static Connection conn; //these variables are now static.
+    private static Sql2oRestaurantDao restaurantDao; //these variables are now static.
+    private static Sql2oFoodTypeDao foodTypeDao; //these variables are now static.
+    private static Sql2oReviewDao reviewDao; //these variables are now static.
 
-    private static  Sql2o sql2o;
 
-    @Before
-    public void setUp() throws Exception {
-        String connectionString = "jdbc:h2:mem:testing;INIT=RUNSCRIPT from 'classpath:DB/create.sql'";
-        Sql2o sql2o = new Sql2o(connectionString, "", "");
-        foodTypeDao = new Sql2oFoodTypeDao(sql2o);
+    @BeforeClass //changed to @BeforeClass (run once before running any tests in this file)
+    public static void setUp() throws Exception { //changed to static
+        String connectionString = "jdbc:postgresql://localhost:5432/jadlet_test"; //connect to postgres test database
+        Sql2o sql2o = new Sql2o(connectionString, "moringa", "://postgres"); //changed user and pass to null for mac users...Linux & windows need strings
         restaurantDao = new Sql2oRestaurantDao(sql2o);
-        conn = sql2o.open();
+        foodTypeDao = new Sql2oFoodTypeDao(sql2o);
+        reviewDao = new Sql2oReviewDao(sql2o);
+        conn = sql2o.open(); //open connection once before this test file is run
     }
 
-    @After
-    public void tearDown() throws Exception {
-        foodTypeDao.clearAll();
-        conn.close();
+    @After //run after every test
+    public void tearDown() throws Exception {  //I have changed
+        System.out.println("clearing database");
+        restaurantDao.clearAll(); //clear all restaurants after every test
+        foodTypeDao.clearAll(); //clear all restaurants after every test
+        reviewDao.clearAll(); //clear all restaurants after every test
+    }
+
+    @AfterClass //changed to @AfterClass (run once after all tests in this file completed)
+    public static void shutDown() throws Exception{ //changed to static
+        conn.close(); // close connection once after this entire test file is finished
+        System.out.println("connection closed");
     }
 
 

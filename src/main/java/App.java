@@ -21,16 +21,16 @@ public class App {
         Sql2oFoodTypeDao foodtypeDao;
         Sql2oRestaurantDao restaurantDao;
         Sql2oReviewDao reviewDao;
-        Connection conn;
         Gson gson = new Gson();
 
-        String connectionString = "jdbc:h2:~/jadle.db;INIT=RUNSCRIPT from 'classpath:DB/create.sql'";
-        Sql2o sql2o = new Sql2o(connectionString, "", "");
+        staticFileLocation("/public");
+        String connectionString = "jdbc:postgresql://localhost:5432/jadlet"; //connect to jadle, not jadle_test!
+        Sql2o sql2o = new Sql2o(connectionString, "moringa", "://postgres");  //Ubuntu Sql2o sql2o = new Sql2o(connectionString, "user", "1234");
 
         restaurantDao = new Sql2oRestaurantDao(sql2o);
         foodtypeDao = new Sql2oFoodTypeDao(sql2o);
         reviewDao = new Sql2oReviewDao(sql2o);
-        conn = sql2o.open();
+        Connection conn = sql2o.open();
 
 
         get("/restaurants", "application/json", (req, res) -> { //accept a request in format JSON from an app
