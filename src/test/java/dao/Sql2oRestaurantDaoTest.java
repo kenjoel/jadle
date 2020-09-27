@@ -23,6 +23,7 @@ public class Sql2oRestaurantDaoTest {
         String connectionString = "jdbc:h2:mem:testing;INIT=RUNSCRIPT from 'classpath:DB/create.sql';";
         Sql2o sql2o = new Sql2o(connectionString,"","");
         restaurantDao = new Sql2oRestaurantDao(sql2o);
+        foodTypeDao = new Sql2oFoodTypeDao(sql2o);
         conn = sql2o.open();
     }
 
@@ -42,10 +43,10 @@ public class Sql2oRestaurantDaoTest {
 
     @Test
     public void RestaurantReturnsFoodtypesCorrectly() throws Exception {
-        Foodtype testFoodtype  = new Foodtype("Seafood");
+        Foodtype testFoodtype  = setupNewFoodtype();
         foodTypeDao.add(testFoodtype);
 
-        Foodtype otherFoodtype  = new Foodtype("Bar Food");
+        Foodtype otherFoodtype  = setupNewFoodtype();
         foodTypeDao.add(otherFoodtype);
 
         Restaurant testRestaurant = setupRestaurant();
@@ -54,7 +55,7 @@ public class Sql2oRestaurantDaoTest {
         restaurantDao.addRestaurantToFoodType(testRestaurant,otherFoodtype);
 
         Foodtype[] foodtypes = {testFoodtype, otherFoodtype}; //oh hi what is this? Observe how we use its assertion below.
-
+        System.out.println(Arrays.toString(foodtypes));
         assertEquals(Arrays.asList(foodtypes), restaurantDao.getAllFoodtypesByRestaurant(testRestaurant.getId()));
     }
 

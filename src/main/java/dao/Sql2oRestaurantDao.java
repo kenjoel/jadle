@@ -66,11 +66,11 @@ public class Sql2oRestaurantDao implements RestaurantDao {
     public List<Foodtype> getAllFoodtypesByRestaurant(int restaurantId){
         ArrayList<Foodtype> foodtypes = new ArrayList<>();
 
-        String joinQuery = "SELECT foodtypeid FROM restaurants_foodtypes WHERE restaurantid = :restaurantId";
+        String joinQuery = "SELECT foodtypeid FROM restaurants_foodtypes WHERE restaurantid = :restaurantid";
 
         try (Connection con = sql2o.open()) {
             List<Integer> allFoodtypesIds = con.createQuery(joinQuery)
-                    .addParameter("restaurantId", restaurantId)
+                    .addParameter("restaurantid", restaurantId)
                     .executeAndFetch(Integer.class);
             for (Integer foodId : allFoodtypesIds){
                 String foodtypeQuery = "SELECT * FROM foodtypes WHERE id = :foodtypeId";
@@ -105,9 +105,13 @@ public class Sql2oRestaurantDao implements RestaurantDao {
     @Override
     public void deleteById(int id) {
         String sql = "DELETE from restaurants WHERE id=:id";
+        String deleteJoin = "DELETE from restaurants_foodtypes WHERE restaurantid = :restaurantid";
         try (Connection con = sql2o.open()) {
             con.createQuery(sql)
                     .addParameter("id", id)
+                    .executeUpdate();
+            con.createQuery(deleteJoin)
+                    .addParameter("restaurantid", id)
                     .executeUpdate();
         } catch (Sql2oException ex) {
             System.out.println(ex);
