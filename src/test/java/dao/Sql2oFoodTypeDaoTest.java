@@ -20,8 +20,8 @@ public class Sql2oFoodTypeDaoTest{
 
     @BeforeClass //changed to @BeforeClass (run once before running any tests in this file)
     public static void setUp() throws Exception { //changed to static
-        String connectionString = "jdbc:postgresql://localhost:5432/jadlet_test"; //connect to postgres test database
-        Sql2o sql2o = new Sql2o(connectionString, "moringa", "://postgres"); //changed user and pass to null for mac users...Linux & windows need strings
+        String connectionString = "jdbc:postgresql://ec2-3-95-87-221.compute-1.amazonaws.com:5432/d7ld0jefl65db7" + "?sslmode=require" ; //connect to postgres test database
+        Sql2o sql2o = new Sql2o(connectionString, "sltjvgqfwdvedr", "b11b9460a36c13d06bf8b62676e12b3b6385346df6817b5a446f1870a8e77c58"); //changed user and pass to null for mac users...Linux & windows need strings
         restaurantDao = new Sql2oRestaurantDao(sql2o);
         foodTypeDao = new Sql2oFoodTypeDao(sql2o);
         reviewDao = new Sql2oReviewDao(sql2o);

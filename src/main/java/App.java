@@ -16,22 +16,36 @@ import java.util.Map;
 import static spark.Spark.*;
 
 public class App {
+    static int getHerokuAssignedPort() {
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        if (processBuilder.environment().get("PORT") != null) {
+            return Integer.parseInt(processBuilder.environment().get("PORT"));
+        }
+        return 4567; //return default port if heroku-port isn't set (i.e. on localhost)
+    }
 
     public static void main(String[] args) {
+        port(getHerokuAssignedPort());
+        staticFileLocation("/public");
+
         Sql2oFoodTypeDao foodtypeDao;
         Sql2oRestaurantDao restaurantDao;
         Sql2oReviewDao reviewDao;
         Gson gson = new Gson();
 
-        staticFileLocation("/public");
-        String connectionString = "jdbc:postgresql://localhost:5432/jadlet"; //connect to jadle, not jadle_test!
-        Sql2o sql2o = new Sql2o(connectionString, "moringa", "://postgres");  //Ubuntu Sql2o sql2o = new Sql2o(connectionString, "user", "1234");
+        String connectionString = "jdbc:postgresql://ec2-3-95-87-221.compute-1.amazonaws.com:5432/d7ld0jefl65db7" + "?sslmode=require" ; //connect to postgres test database
+        Sql2o sql2o = new Sql2o(connectionString, "sltjvgqfwdvedr", "b11b9460a36c13d06bf8b62676e12b3b6385346df6817b5a446f1870a8e77c58"); //changed user and pass to null for mac users...Linux & windows need strings
 
         restaurantDao = new Sql2oRestaurantDao(sql2o);
         foodtypeDao = new Sql2oFoodTypeDao(sql2o);
         reviewDao = new Sql2oReviewDao(sql2o);
         Connection conn = sql2o.open();
 
+
+        get("/", "application/json", (req, res) -> { //accept a request in format JSON from an app
+            System.out.println(restaurantDao.getAll());
+            return gson.toJson(restaurantDao.getAll());//send it back to be displayed
+        });
 
         get("/restaurants", "application/json", (req, res) -> { //accept a request in format JSON from an app
             System.out.println(restaurantDao.getAll());
